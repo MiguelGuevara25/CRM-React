@@ -1,4 +1,14 @@
+import { useNavigate, Form, redirect } from "react-router-dom";
+import { eliminarCliente } from "../data/clientes";
+
+export async function action({ params }) {
+  await eliminarCliente(params.clienteId);
+  return redirect("/");
+}
+
 const Clientes = ({ cliente }) => {
+  const navigate = useNavigate();
+
   const { nombre, empresa, email, telefono, id } = cliente;
 
   return (
@@ -8,7 +18,7 @@ const Clientes = ({ cliente }) => {
         <p>{empresa}</p>
       </td>
 
-      <td className="p-6 space-y-2">
+      <td className="p-6 space-y-2 text-center">
         <p className="text-gray-600">
           <span className="text-gray-800 uppercase font-bold">Email: </span>
           {email}
@@ -20,20 +30,31 @@ const Clientes = ({ cliente }) => {
         </p>
       </td>
 
-      <td className="p-6 flex gap-3">
+      <td className="p-6 flex gap-3 justify-center">
         <button
           type="buttton"
           className="text-blue-600 p-3 rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white uppercase font-bold text-xs"
+          onClick={() => navigate(`/clientes/${id}/editar`)}
         >
           Editar
         </button>
 
-        <button
-          type="buttton"
-          className="text-red-600 p-3 rounded-lg border border-red-600 hover:bg-red-600 hover:text-white uppercase font-bold text-xs"
+        <Form
+          method="post"
+          action={`/clientes/${id}/eliminar`}
+          onSubmit={(e) => {
+            if (!confirm("¿Deseas eliminar este registro")) {
+              e.preventDefault();
+            }
+          }}
         >
-          Eliminar
-        </button>
+          <button
+            type="submit"
+            className="text-red-600 p-3 rounded-lg border border-red-600 hover:bg-red-600 hover:text-white uppercase font-bold text-xs"
+          >
+            Eliminar
+          </button>
+        </Form>
       </td>
     </tr>
   );
